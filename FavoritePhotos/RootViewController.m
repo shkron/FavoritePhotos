@@ -177,17 +177,27 @@
 //    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
     //checking the ID for the selected photo for the duplicate in documentsDirectory
-    for (Photos *photoFav in self.favoritesArray)
+    if (self.favoritesArray.count == 0)
     {
-        if (![photoFav.imageID isEqualToString:photoObj.imageID])
+        [self.favoritesArray addObject:photoObj];
+        NSLog(@"%lu", (unsigned long)self.favoritesArray.count);
+        NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
+        [self.favoritesArray writeToURL:plistURL atomically:YES];
+    }
+    else
+    {
+        for (Photos *photoFav in self.favoritesArray)
         {
-            [self.favoritesArray addObject:photoObj];
-            NSLog(@"%lu", (unsigned long)self.favoritesArray.count);
-            NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
-            [self.favoritesArray writeToURL:plistURL atomically:YES];
+            if (![photoObj.imageID isEqualToString:photoFav.imageID])
+            {
+                [self.favoritesArray addObject:photoObj];
+                NSLog(@"%lu", (unsigned long)self.favoritesArray.count);
+                NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
+                [self.favoritesArray writeToURL:plistURL atomically:YES];
+            }
+        //    [userDefaults setObject:[NSDate date] forKey:kNSUserDefaultsLastSavedKey];
+        //    [userDefaults synchronize];
         }
-    //    [userDefaults setObject:[NSDate date] forKey:kNSUserDefaultsLastSavedKey];
-    //    [userDefaults synchronize];
     }
 }
 
