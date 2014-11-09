@@ -9,8 +9,12 @@
 #import <Foundation/Foundation.h>
 
 @interface Photos : NSObject
+
 @property (strong, nonatomic) NSString *imageID;
+@property NSString *imgURLString;
 @property (strong, nonatomic) NSData *imgData;
+@property (strong, nonatomic) NSString *favImgStar;
+
 @property double latitute;
 @property double longtitude;
 

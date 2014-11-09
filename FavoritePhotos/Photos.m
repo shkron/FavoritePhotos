@@ -10,7 +10,7 @@
 
 @interface Photos()
 
-@property NSString *imgURLString;
+
 
 @end
 
@@ -21,6 +21,7 @@
     self = [super init];
 
     self.imageID = dictionary[@"id"];
+    self.favImgStar = @"";
 
     NSDictionary *imgJSON = dictionary[@"images"];
     NSDictionary *imgJSONResolution = imgJSON[@"standard_resolution"];
@@ -36,6 +37,7 @@
 
     return self;
 }
+
 
 // Calling from async request already, not sure if I still need that
 -(void)retrieveImageDataWithComplete:(void(^)(NSData *data, NSError *error))completionBlock

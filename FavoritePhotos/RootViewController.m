@@ -15,6 +15,7 @@
 @property (strong, nonatomic) IBOutlet UITextField *searchTextField;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
 
+
 @property NSMutableArray *collectionViewArray;
 @property NSMutableArray *favoritesArray;
 
@@ -25,6 +26,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+//    self.favoritesArray = [NSMutableArray array];
     //load favoritesArray in order to add favorite pictures there
     [self load];
 
@@ -45,28 +47,79 @@
 {
     CustomCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell"
                                                                                forIndexPath:indexPath];
-    Photos *photosObj = self.collectionViewArray[indexPath.row];
+    Photos *photosObj = self.collectionViewArray[indexPath.item];
     cell.imageView.image = nil;
 
-    [photosObj retrieveImageDataWithComplete:^(NSData *data, NSError *error)
+
+    //checking if the picture has been already downloaded and re-using it along with the favorite START icon.
+    if (self.favoritesArray.count == 0)
     {
-        if (error)
-        {
-            [self networkAlertWindow:error.localizedDescription];
-        }
-        else
-        {
-            cell.imageView.image = [UIImage imageWithData:data];
-            [self.collectionViewArray[indexPath.row] setImgData:data];
-        }
-    }];
 
-    //when that imageData method finishes, we take the data that it gives us
-    // and do this
-    //
-    //UIImage* image = [UIImage imageWithData:returnedData];
-    //cell.imageView.image = image;
+        [photosObj retrieveImageDataWithComplete:^(NSData *data, NSError *error)
+         {
+             if (error)
+             {
+                 [self networkAlertWindow:error.localizedDescription];
+             }
+             else
+             {
 
+                 cell.imageView.image = [UIImage imageWithData:data];
+                 [self.collectionViewArray[indexPath.item] setImgData:data];
+             }
+         }];
+
+    }
+    else
+    {
+        for (int i = 0; i < self.favoritesArray.count; i++)
+        {
+            NSString *checkID = self.favoritesArray[i][@"imageID"];
+            if ([photosObj.imageID isEqualToString:checkID])
+            {
+
+                cell.imageView.image = [UIImage imageWithData:self.favoritesArray[i][@"imgData"]];
+//                cell.favImgLabel.text = self.favoritesArray[i][@"favImgStar"];
+                [self.collectionViewArray[indexPath.item] setImgData:self.favoritesArray[i][@"imgData"]];
+                [self.collectionViewArray[indexPath.item] setFavImgStar:self.favoritesArray[i][@"favImgStar"]];
+                break;
+            }
+            else if (self.favoritesArray.count == i+1)
+            {
+                [photosObj retrieveImageDataWithComplete:^(NSData *data, NSError *error)
+                 {
+                     if (error)
+                     {
+                         [self networkAlertWindow:error.localizedDescription];
+                     }
+                     else
+                     {
+                         cell.imageView.image = [UIImage imageWithData:data];
+                         [self.collectionViewArray[indexPath.item] setImgData:data];
+                     }
+                 }];
+
+            }
+        }
+    }
+
+////MAIN BLOCK TO DOWNLOAD THE DATA FOR CELLS
+//    [photosObj retrieveImageDataWithComplete:^(NSData *data, NSError *error)
+//    {
+//        if (error)
+//        {
+//            [self networkAlertWindow:error.localizedDescription];
+//        }
+//        else
+//        {
+//
+//            cell.imageView.image = [UIImage imageWithData:data];
+//            [self.collectionViewArray[indexPath.item] setImgData:data];
+//        }
+//    }];
+//
+
+    cell.favImgLabel.text = [self.collectionViewArray[indexPath.item] favImgStar];
 
     return cell;
 }
@@ -91,17 +144,42 @@
     return YES;
 }
 
--(void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    Photos *photo = self.collectionViewArray[indexPath.item];
-    [self remove:photo];
-
-}
+//-(void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    Photos *photo = self.collectionViewArray[indexPath.item];
+//    photo.favImgStar = @"";
+//
+//    NSArray *indexPathArray = @[indexPath];
+//
+//    [self.collectionView reloadItemsAtIndexPaths:indexPathArray];
+//    [self remove:photo];
+//
+//}
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+
+NSArray *indexPathArray = @[indexPath];
+
     Photos *photo = self.collectionViewArray[indexPath.item];
+
+    if (![photo.favImgStar isEqualToString:@"⭐️"])
+    {
+    photo.favImgStar = @"⭐️";
+
+
+
+    [self.collectionView reloadItemsAtIndexPaths:indexPathArray];
+
     [self save:photo];
+    }
+    else
+    {
+        photo.favImgStar = @"";
+        [self remove:photo];
+        [self.collectionView reloadItemsAtIndexPaths:indexPathArray];
+
+    }
     
 }
 
@@ -179,22 +257,34 @@
     //checking the ID for the selected photo for the duplicate in documentsDirectory
     if (self.favoritesArray.count == 0)
     {
-        [self.favoritesArray addObject:photoObj];
-        NSLog(@"%lu", (unsigned long)self.favoritesArray.count);
-        NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
+        NSDictionary *photoDict = @{@"imageID" : photoObj.imageID, @"imgData" : photoObj.imgData, @"favImgStar" : photoObj.favImgStar}; // add more key:value from Photos if needed
+
+        [self.favoritesArray addObject:photoDict];
+        NSLog(@"Added first object to array. Arry count %lu", (unsigned long)self.favoritesArray.count);
+        NSURL *plistURL = [[self documentsDirectory] URLByAppendingPathComponent:@"fovorites.plist"];
         [self.favoritesArray writeToURL:plistURL atomically:YES];
     }
     else
     {
-        for (Photos *photoFav in self.favoritesArray)
+//        NSString *imgID = photoObj.imageID;
+        for (int i = 0; i < self.favoritesArray.count; i++)
         {
-            if (![photoObj.imageID isEqualToString:photoFav.imageID])
+            NSString *checkID = self.favoritesArray[i][@"imageID"];
+            if ([photoObj.imageID isEqualToString:checkID])
             {
-                [self.favoritesArray addObject:photoObj];
-                NSLog(@"%lu", (unsigned long)self.favoritesArray.count);
-                NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
+                break;
+            }
+            else if (self.favoritesArray.count == i+1)
+            {
+                NSDictionary *photoDict = @{@"imageID" : photoObj.imageID, @"imgData" : photoObj.imgData, @"favImgStar" : photoObj.favImgStar}; // add more key:value from Photos if needed
+
+                [self.favoritesArray addObject:photoDict];
+
+                NSLog(@"Added object. Array count = %lu", (unsigned long)self.favoritesArray.count);
+                NSURL *plistURL = [[self documentsDirectory] URLByAppendingPathComponent:@"fovorites.plist"];
                 [self.favoritesArray writeToURL:plistURL atomically:YES];
             }
+
         //    [userDefaults setObject:[NSDate date] forKey:kNSUserDefaultsLastSavedKey];
         //    [userDefaults synchronize];
         }
@@ -203,7 +293,7 @@
 
 -(void)load
 {
-    NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"favorites.plist"];
+    NSURL *plistURL = [[self documentsDirectory] URLByAppendingPathComponent:@"fovorites.plist"];
     self.favoritesArray = [NSMutableArray arrayWithContentsOfURL:plistURL];
     if (self.favoritesArray == nil)
     {
@@ -215,11 +305,11 @@
 {
     for (int i=0; i < self.favoritesArray.count; i++)
     {
-        Photos *photo = self.favoritesArray[i];
-        if ([photo.imageID isEqualToString:photoObj.imageID])
+//        NSDictionary *photoDict = self.favoritesArray[i];
+        if ([self.favoritesArray[i][@"imageID"] isEqualToString:photoObj.imageID])
         {
             [self.favoritesArray removeObjectAtIndex:i];
-            NSLog(@"%lu", (unsigned long)self.favoritesArray.count);
+            NSLog(@"Removed object. Array count = %lu", (unsigned long)self.favoritesArray.count);
             NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
             [self.favoritesArray writeToURL:plistURL atomically:YES];
         }
