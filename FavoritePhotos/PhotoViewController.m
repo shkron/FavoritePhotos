@@ -8,11 +8,13 @@
 
 #import "PhotoViewController.h"
 @import MessageUI;
+@import Social;
 
 @interface PhotoViewController () <UICollectionViewDataSource, UICollectionViewDelegate, MFMailComposeViewControllerDelegate>
 
 @property NSMutableArray *favoritesArray;
 @property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
+
 
 @end
 
@@ -48,18 +50,35 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Favorites" message:@"What do you want to do with this image?" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction *emailButton = [UIAlertAction actionWithTitle:@"Email it" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self sendEmail:self.favoritesArray[indexPath.item][@"imgData"]];
+    }];
+    UIAlertAction *twitButton = [UIAlertAction actionWithTitle:@"Twit it" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self sendTwit:self.favoritesArray[indexPath.item][@"imgData"]];
 
-    [self sendEmail:self.favoritesArray[indexPath.item][@"imgData"]];
-//    [self.favoritesArray removeObjectAtIndex:indexPath.item];
-//
-//    [self.collectionView reloadData];
-//
-//    NSLog(@"Removed object. Array count = %lu", (unsigned long)self.favoritesArray.count);
-//    NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
-//    [self.favoritesArray writeToURL:plistURL atomically:YES];
+    }];
+    UIAlertAction *deleteButton = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            [self.favoritesArray removeObjectAtIndex:indexPath.item];
+        
+            [self.collectionView reloadData];
+        
+            NSLog(@"Removed object. Array count = %lu", (unsigned long)self.favoritesArray.count);
+            NSURL *plistURL = [[self documentsDirectory]URLByAppendingPathComponent:@"fovorites.plist"];
+            [self.favoritesArray writeToURL:plistURL atomically:YES];
+    }];
+    UIAlertAction *nothigButton = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+
+    }];
+
+    [alert addAction:emailButton];
+    [alert addAction:twitButton];
+    [alert addAction:deleteButton];
+    [alert addAction:nothigButton];
+
+    [self presentViewController:alert animated:YES completion:nil];
+
 }
-
-
 
 -(NSURL *)documentsDirectory
 {
@@ -92,6 +111,7 @@
         [mailCont setToRecipients:[NSArray arrayWithObject:@"emelyanoff@gmail.com"]];
         [mailCont setMessageBody:@"It's from Instagram" isHTML:NO];
         [mailCont addAttachmentData:data mimeType:@"image/jpg" fileName:@"pic"];
+        [mailCont setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
 
         [self presentViewController:mailCont animated:YES completion:nil];
     }
@@ -106,6 +126,28 @@
     else
     {
     [controller dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+//MARK: twitter use
+
+-(void) sendTwit:(NSData *)data
+{
+    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
+    {
+        SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+        [tweetSheet setInitialText:@"Cool pic!"];
+        [tweetSheet addImage:[UIImage imageWithData:data]];
+        [self presentViewController:tweetSheet animated:YES completion:nil];
+    }
+    else
+    {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry"
+                                                            message:@"You can't send a tweet right now, make sure your device has an internet connection and you have at least one Twitter account setup"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+        [alertView show];
     }
 }
 
