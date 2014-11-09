@@ -16,13 +16,63 @@
                     <view key="view" contentMode="scaleToFill" id="dxb-M7-6Aa">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="eoG-XJ-sgD">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="53I-0c-a0Z">
+                                    <size key="itemSize" width="300" height="300"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="Xei-rn-l4b" customClass="CustomCollectionViewCell">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fHC-FA-RIt">
+                                                    <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstAttribute="bottomMargin" secondItem="fHC-FA-RIt" secondAttribute="bottom" constant="-8" id="7Xf-YE-IiF"/>
+                                            <constraint firstItem="fHC-FA-RIt" firstAttribute="top" secondItem="Xei-rn-l4b" secondAttribute="topMargin" constant="-8" id="Xe6-k1-xoL"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="fHC-FA-RIt" secondAttribute="trailing" constant="-8" id="m0X-m7-ohc"/>
+                                            <constraint firstItem="fHC-FA-RIt" firstAttribute="leading" secondItem="Xei-rn-l4b" secondAttribute="leadingMargin" constant="-8" id="xzV-aB-OU5"/>
+                                        </constraints>
+                                        <size key="customSize" width="300" height="300"/>
+                                        <connections>
+                                            <outlet property="imageView" destination="fHC-FA-RIt" id="Lme-SU-v9L"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="g50-Qa-Jah" id="5ar-dE-Oez"/>
+                                    <outlet property="delegate" destination="g50-Qa-Jah" id="S1d-vc-6BD"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="eoG-XJ-sgD" firstAttribute="leading" secondItem="dxb-M7-6Aa" secondAttribute="leadingMargin" constant="-16" id="0kN-Am-5Kk"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="eoG-XJ-sgD" secondAttribute="trailing" constant="-16" id="FfE-yz-AIw"/>
+                            <constraint firstItem="eoG-XJ-sgD" firstAttribute="top" secondItem="dxb-M7-6Aa" secondAttribute="topMargin" id="WKS-sJ-ou2"/>
+                            <constraint firstItem="eoG-XJ-sgD" firstAttribute="bottom" secondItem="dxb-M7-6Aa" secondAttribute="bottomMargin" id="ZuJ-nu-Lbm"/>
+                        </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="YvU-L3-3NX"/>
+                    <navigationItem key="navigationItem" id="KYf-0z-6WZ"/>
+                    <connections>
+                        <outlet property="collectionView" destination="eoG-XJ-sgD" id="n3K-BC-zXy"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m2I-u8-ZPH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="991" y="611"/>
+            <point key="canvasLocation" x="1523" y="611"/>
         </scene>
         <!--Root View Controller-->
         <scene sceneID="dVN-qD-o4L">
@@ -135,7 +185,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="7Nw-V5-0YW" kind="relationship" relationship="viewControllers" id="i2S-Qd-Kdz"/>
-                        <segue destination="g50-Qa-Jah" kind="relationship" relationship="viewControllers" id="Old-9P-zU3"/>
+                        <segue destination="jet-Mm-nmP" kind="relationship" relationship="viewControllers" id="Old-9P-zU3"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qDr-oA-CFQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -160,6 +210,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MBU-k7-2fu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="991" y="-19"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="V9f-sd-lnF">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="jet-Mm-nmP" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="favorites" id="YvU-L3-3NX"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ri5-cP-Jor">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="g50-Qa-Jah" kind="relationship" relationship="rootViewController" id="8RC-9G-rHR"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fvw-ka-vqv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="991" y="611"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

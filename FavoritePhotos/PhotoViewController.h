@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CustomCollectionViewCell.h"
 
 @interface PhotoViewController : UIViewController
+
 
 @end

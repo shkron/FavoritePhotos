@@ -8,7 +8,9 @@
 
 #import "RootViewController.h"
 #import "CustomCollectionViewCell.h"
+
 #import "Photos.h"
+
 
 @interface RootViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UITextFieldDelegate>
 
@@ -34,6 +36,11 @@
 
 
 }
+//-(void)viewWillAppear:(BOOL)animated
+//{
+//    [self load];
+//    [self.collectionView reloadData];
+//}
 
 //MARK: delegate methods
 
@@ -182,8 +189,6 @@ NSArray *indexPathArray = @[indexPath];
     }
     
 }
-
-
 
 //MARK: JSON Data pull method
 
