@@ -11,6 +11,8 @@
 
 #import "Photos.h"
 
+#define kAPIURL @"https://api.instagram.com/v1/tags/%@/media/recent?client_id=26245f17601d4c4b96cc640a23892064"
+
 
 @interface RootViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UITextFieldDelegate>
 
@@ -28,6 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    [self searchButtonPressed:nil];
 //    self.favoritesArray = [NSMutableArray array];
     //load favoritesArray in order to add favorite pictures there
     [self load];
@@ -246,10 +249,20 @@ NSArray *indexPathArray = @[indexPath];
     {
         self.collectionViewArray = [NSMutableArray array];
 
-        NSString *searchString = [NSString stringWithFormat:@"https://api.instagram.com/v1/tags/%@/media/recent?client_id=26245f17601d4c4b96cc640a23892064", self.searchTextField.text];
+        NSString *searchString = [NSString stringWithFormat:kAPIURL, self.searchTextField.text];
 
         [self dataWithURLString:searchString];
         [self.searchTextField resignFirstResponder];
+    }
+    else
+    {
+        self.collectionViewArray = [NSMutableArray array];
+
+        NSString *searchString = [NSString stringWithFormat:kAPIURL, @"recent"];
+
+        [self dataWithURLString:searchString];
+        [self.searchTextField resignFirstResponder];
+
     }
 
 }

@@ -5,7 +5,7 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Photo View Controller-->
+        <!--Favorites-->
         <scene sceneID="jqP-mc-tCW">
             <objects>
                 <viewController id="g50-Qa-Jah" customClass="PhotoViewController" sceneMemberID="viewController">
@@ -65,7 +65,7 @@
                             <constraint firstItem="eoG-XJ-sgD" firstAttribute="bottom" secondItem="dxb-M7-6Aa" secondAttribute="bottomMargin" id="ZuJ-nu-Lbm"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="KYf-0z-6WZ"/>
+                    <navigationItem key="navigationItem" title="Favorites" id="KYf-0z-6WZ"/>
                     <connections>
                         <outlet property="collectionView" destination="eoG-XJ-sgD" id="n3K-BC-zXy"/>
                     </connections>
